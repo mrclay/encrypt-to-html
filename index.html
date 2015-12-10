@@ -3,47 +3,58 @@
 <head>
 	<meta charset="utf-8">
 	<title>Encrypt to HTML</title>
-	<link rel="stylesheet"
-		  href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
-		  integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"
-		  crossorigin="anonymous">
 	<script>
 		if (/mrclay\.org$/.test(location.host)) {
 			location.href = 'https://bedford.accountservergroup.com/~mrclayor/encrypt-to-html/';
 		}
 	</script>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+	<link rel="stylesheet"
+		  href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+		  integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"
+		  crossorigin="anonymous">
+	<style>
+		body {margin: 2em 0}
+		header {margin: 0 2em 2em}
+		section {margin: 0 2em}
+		footer {margin-top: 2em; padding: 1em 2em 0 2em; border-top: 1px solid #ccc}
+
+		textarea {font-family:monospace}
+		[for="file_base"] {display: block}
+		#file_base {width:10em;display:inline-block;vertical-align:middle}
+		[for="pwd1"] small {font-style: italic}
+		[type="submit"] img {height:1em;margin-left:5px}
+	</style>
 </head>
-<body style="margin:2em">
-<h1 class="text-muted">Encrypt to HTML</h1>
-<section>
+<body>
+<header>
+	<h1 class="text-muted">Encrypt to HTML</h1>
 	<p>This outputs a standalone HTML file that can be decrypted <em>anywhere</em>, even offline.
-	<p>Just open in a browser. Don't trust this site? <a href="" download="encrypt-to-HTML.html">Download</a> and use this locally.</p>
-	<form style="margin-bottom:2em">
+	<p>100% client-side. <a href="" download="encrypt-to-HTML.html">Download</a> and use it anywhere.</p>
+</header>
+<section>
+	<form>
 		<div class="form-group">
 			<label for="file_base">Filename</label>
-			<div class="form-inline">
-				<input class="form-control"
-					   type="text"
-					   id="file_base"
-					   value="my-secret"
-					   style="width:10em"
-					   onfocus="this.select()"> .html
-			</div>
+			<input class="form-control"
+				   type="text"
+				   id="file_base"
+				   value="my-secret"
+				   onfocus="this.select()"> .html
 		</div>
 		<div class="form-group">
 			<label for="msg">Sensitive Content</label>
 			<textarea class="form-control"
-					  rows="10"
+					  rows="5"
 					  id="msg"
-					  style="font-family:monospace"
 					  autofocus></textarea>
 		</div>
 		<div class="form-group">
-			<label for="pwd1">Password (repeat) <small style="font-style:italic">Use a strong one!</small></label>
+			<label for="pwd1">Password (repeat) <small>Use a strong one!</small></label>
 			<input type="password" class="form-control" id="pwd1" required autocomplete="off">
 			<input type="password" class="form-control" id="pwd2" required autocomplete="off">
 		</div>
-		<button type="submit" class="btn btn-primary">Get HTML <img style="height:1em;margin-left:5px" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjxzdmcKICAgeG1sbnM6ZGM9Imh0dHA6Ly9wdXJsLm9yZy9kYy9lbGVtZW50cy8xLjEvIgogICB4bWxuczpjYz0iaHR0cDovL2NyZWF0aXZlY29tbW9ucy5vcmcvbnMjIgogICB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiCiAgIHhtbG5zOnN2Zz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciCiAgIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIKICAgaWQ9InN2ZzIiCiAgIHZpZXdCb3g9IjAgMCA2NTggMTAyNCIKICAgaGVpZ2h0PSIxMDI0IgogICB3aWR0aD0iNjU4IgogICB2ZXJzaW9uPSIxLjEiPgogIDxwYXRoCiAgICAgc3R5bGU9ImZpbGw6I2ZmZmZmZjtmaWxsLW9wYWNpdHk6MSIKICAgICBpZD0icGF0aDUiCiAgICAgZD0ibSAxODIuODU3LDQxMi44NTcgMjkyLjU3MSwwIDAsLTEwOS43MTQgcSAwLC02MC41NzEgLTQyLjg1NywtMTAzLjQyOSAtNDIuODU3LC00Mi44NTggLTEwMy40MjksLTQyLjg1NyAtNjAuNTcyLDAuMDAxIC0xMDMuNDI5LDQyLjg1NyAtNDIuODU3LDQyLjg1NiAtNDIuODU3LDEwMy40MjkgbCAwLDEwOS43MTQgeiBtIDQ3NS40MjksNTQuODU3IDAsMzI5LjE0MyBxIDAsMjIuODU3IC0xNiwzOC44NTcgLTE2LDE2IC0zOC44NTcsMTYgbCAtNTQ4LjU3MSwwIHEgLTIyLjg1NywwIC0zOC44NTcsLTE2IC0xNiwtMTYgLTE2LC0zOC44NTcgbCAwLC0zMjkuMTQzIHEgMCwtMjIuODU3IDE2LC0zOC44NTcgMTYsLTE2IDM4Ljg1NywtMTYgbCAxOC4yODYsMCAwLC0xMDkuNzE0IHEgMCwtMTA1LjE0MyA3NS40MjksLTE4MC41NzEgNzUuNDI5LC03NS40MjggMTgwLjU3MSwtNzUuNDI5IDEwNS4xNDIsLTEwZS00IDE4MC41NzEsNzUuNDI5IDc1LjQyOSw3NS40MyA3NS40MjksMTgwLjU3MSBsIDAsMTA5LjcxNCAxOC4yODYsMCBxIDIyLjg1NywwIDM4Ljg1NywxNiAxNiwxNiAxNiwzOC44NTcgeiIgLz4KPC9zdmc+Cg=="></button>
+		<button type="submit" class="btn btn-primary">Get HTML <img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjxzdmcKICAgeG1sbnM6ZGM9Imh0dHA6Ly9wdXJsLm9yZy9kYy9lbGVtZW50cy8xLjEvIgogICB4bWxuczpjYz0iaHR0cDovL2NyZWF0aXZlY29tbW9ucy5vcmcvbnMjIgogICB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiCiAgIHhtbG5zOnN2Zz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciCiAgIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIKICAgaWQ9InN2ZzIiCiAgIHZpZXdCb3g9IjAgMCA2NTggMTAyNCIKICAgaGVpZ2h0PSIxMDI0IgogICB3aWR0aD0iNjU4IgogICB2ZXJzaW9uPSIxLjEiPgogIDxwYXRoCiAgICAgc3R5bGU9ImZpbGw6I2ZmZmZmZjtmaWxsLW9wYWNpdHk6MSIKICAgICBpZD0icGF0aDUiCiAgICAgZD0ibSAxODIuODU3LDQxMi44NTcgMjkyLjU3MSwwIDAsLTEwOS43MTQgcSAwLC02MC41NzEgLTQyLjg1NywtMTAzLjQyOSAtNDIuODU3LC00Mi44NTggLTEwMy40MjksLTQyLjg1NyAtNjAuNTcyLDAuMDAxIC0xMDMuNDI5LDQyLjg1NyAtNDIuODU3LDQyLjg1NiAtNDIuODU3LDEwMy40MjkgbCAwLDEwOS43MTQgeiBtIDQ3NS40MjksNTQuODU3IDAsMzI5LjE0MyBxIDAsMjIuODU3IC0xNiwzOC44NTcgLTE2LDE2IC0zOC44NTcsMTYgbCAtNTQ4LjU3MSwwIHEgLTIyLjg1NywwIC0zOC44NTcsLTE2IC0xNiwtMTYgLTE2LC0zOC44NTcgbCAwLC0zMjkuMTQzIHEgMCwtMjIuODU3IDE2LC0zOC44NTcgMTYsLTE2IDM4Ljg1NywtMTYgbCAxOC4yODYsMCAwLC0xMDkuNzE0IHEgMCwtMTA1LjE0MyA3NS40MjksLTE4MC41NzEgNzUuNDI5LC03NS40MjggMTgwLjU3MSwtNzUuNDI5IDEwNS4xNDIsLTEwZS00IDE4MC41NzEsNzUuNDI5IDc1LjQyOSw3NS40MyA3NS40MjksMTgwLjU3MSBsIDAsMTA5LjcxNCAxOC4yODYsMCBxIDIyLjg1NywwIDM4Ljg1NywxNiAxNiwxNiAxNiwzOC44NTcgeiIgLz4KPC9zdmc+Cg=="></button>
 	</form>
 </section>
 <footer>
@@ -53,7 +64,7 @@
 	<p>Dig it? Send me something on my <a href="http://amzn.com/w/37D5BK0ET30ZE">wish list</a>.</p>
 </footer>
 
-<script id="tpl_sjcl">
+<script id="tpl_libs">
 "use strict";function q(a){throw a;}var s=void 0,u=!1;var sjcl={cipher:{},hash:{},keyexchange:{},mode:{},misc:{},codec:{},exception:{corrupt:function(a){this.toString=function(){return"CORRUPT: "+this.message};this.message=a},invalid:function(a){this.toString=function(){return"INVALID: "+this.message};this.message=a},bug:function(a){this.toString=function(){return"BUG: "+this.message};this.message=a},notReady:function(a){this.toString=function(){return"NOT READY: "+this.message};this.message=a}}};
 "undefined"!==typeof module&&module.exports&&(module.exports=sjcl);"function"===typeof define&&define([],function(){return sjcl});
 sjcl.cipher.aes=function(a){this.k[0][0][0]||this.D();var b,c,d,e,f=this.k[0][4],g=this.k[1];b=a.length;var h=1;4!==b&&(6!==b&&8!==b)&&q(new sjcl.exception.invalid("invalid aes key size"));this.b=[d=a.slice(0),e=[]];for(a=b;a<4*b+28;a++){c=d[a-1];if(0===a%b||8===b&&4===a%b)c=f[c>>>24]<<24^f[c>>16&255]<<16^f[c>>8&255]<<8^f[c&255],0===a%b&&(c=c<<8^c>>>24^h<<24,h=h<<1^283*(h>>7));d[a]=d[a-b]^c}for(b=0;a;b++,a--)c=d[b&3?a:a-4],e[b]=4>=a||4>b?c:g[0][f[c>>>24]]^g[1][f[c>>16&255]]^g[2][f[c>>8&255]]^g[3][f[c&
@@ -108,37 +119,63 @@ c,d){var e=sjcl.json;return e.X(a,e.decode(b),c,d)},encode:function(a){var b,c="
 a.replace(/\s/g,"");a.match(/^\{.*\}$/)||q(new sjcl.exception.invalid("json decode: this isn't json!"));a=a.replace(/^\{|\}$/g,"").split(/,/);var b={},c,d;for(c=0;c<a.length;c++)(d=a[c].match(/^\s*(?:(["']?)([a-z][a-z0-9]*)\1)\s*:\s*(?:(-?\d+)|"([a-z0-9+\/%*_.@=\-]*)"|(true|false))$/i))||q(new sjcl.exception.invalid("json decode: this isn't json!")),d[3]?b[d[2]]=parseInt(d[3],10):d[4]?b[d[2]]=d[2].match(/^(ct|adata|salt|iv)$/)?sjcl.codec.base64.toBits(d[4]):unescape(d[4]):d[5]&&(b[d[2]]="true"===
 d[5]);return b},e:function(a,b,c){a===s&&(a={});if(b===s)return a;for(var d in b)b.hasOwnProperty(d)&&(c&&(a[d]!==s&&a[d]!==b[d])&&q(new sjcl.exception.invalid("required parameter overridden")),a[d]=b[d]);return a},fa:function(a,b){var c={},d;for(d in a)a.hasOwnProperty(d)&&a[d]!==b[d]&&(c[d]=a[d]);return c},ea:function(a,b){var c={},d;for(d=0;d<b.length;d++)a[b[d]]!==s&&(c[b[d]]=a[b[d]]);return c}};sjcl.encrypt=sjcl.json.encrypt;sjcl.decrypt=sjcl.json.decrypt;sjcl.misc.ca={};
 sjcl.misc.cachedPbkdf2=function(a,b){var c=sjcl.misc.ca,d;b=b||{};d=b.iter||1E3;c=c[a]=c[a]||{};d=c[d]=c[d]||{firstSalt:b.salt&&b.salt.length?b.salt.slice(0):sjcl.random.randomWords(2,0)};c=b.salt===s?d.firstSalt:b.salt;d[c]=d[c]||sjcl.misc.pbkdf2(a,c,b.iter);return{key:d[c].slice(0),salt:c.slice(0)}};
+
+var $s = document.querySelector.bind(document);
 </script>
 
 <script type="text/template" id="tpl_result">
 	<div class="alert alert-success" role="alert"><p>Your encrypted page is ready!</p></div>
-	<p>Click <a class="btn btn-info" id="down"></a> to download, or just drag it to your bookmarks.</p>
+	<p>Download <a class="btn btn-info" id="down"></a></p>
 	<h3>Preview of <span id="h3_name"></span></h3>
 	<iframe style="height:20em;width:100%"></iframe>
 </script>
 
+<script type="text/template" id="tpl_page">
+	<!doctype html>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+	<body style="margin:2em">
+	<section style="text-align:center">
+		<input type="password" autofocus placeholder="Password">
+		<textarea hidden readonly rows='10' style='font-family:monospace;width:95%;padding:1em'></textarea>
+	</section>
+	<footer style="margin-top:1em">
+		<hr>
+		<p>Created with <a target="_blank" href="http://www.mrclay.org/encrypt-to-html/">Encrypt to HTML</a>.
+	</footer>
+	{{{SCRIPT}}}
+	</body>
+</script>
+
 <script type="text/template" id="tpl_script">
-{{{SJCL}}}
-document.querySelector('input').addEventListener('keyup', function (e) {
+{{{LIBS}}}
+$s('input').addEventListener('keyup', function (e) {
 	if (e.keyCode == 13) {
-		var cipher = {{{DATA}}};
-		var plain = sjcl.decrypt(e.target.value, cipher);
-		document.querySelector('section').innerHTML = "<textarea readonly rows='10' " +
-			"style='font-family:monospace;width:95%;padding:1em'></textarea>";
-		var ta = document.querySelector('textarea');
+		var cipher = {{{DATA}}}, plain = sjcl.decrypt(e.target.value, cipher), ta = $s('textarea');
 		ta.value = plain;
+		ta.hidden = false;
+		$s('input').hidden = true;
+		ta.focus();
 		ta.select();
 	}
 });
 </script>
 
 <script>
-document.querySelector('form').addEventListener('submit', function (e) {
+!function(){
+	var ta = $s('textarea');
+	setInterval(function () {
+		if (ta.scrollHeight > ta.offsetHeight + 10) {
+			ta.style.height = (ta.scrollHeight + 10) + 'px';
+		}
+	}, 1000);
+}();
+
+$s('form').addEventListener('submit', function (e) {
 	e.preventDefault();
 
-	var pwd = document.querySelector('#pwd1').value,
-		pwd2 = document.querySelector('#pwd2').value,
-		basename = document.querySelector('#file_base').value,
+	var pwd = $s('#pwd1').value,
+		pwd2 = $s('#pwd2').value,
+		basename = $s('#file_base').value + ".html",
 		canonical = 'http://www.mrclay.org/encrypt-to-html/';
 
 	if (!pwd || (pwd !== pwd2)) {
@@ -146,39 +183,40 @@ document.querySelector('form').addEventListener('submit', function (e) {
 		return;
 	}
 
-	var json = sjcl.encrypt(pwd, document.querySelector('#msg').value, {
-		iter: 100000,
-		ks: 256
-	});
+	// can take a bit on mobile. give visual clue
+	$s('button').textContent = 'Working ...';
+	$s('section').style.opacity = '.6';
 
-	if (window.console) {
-		console.log('sjcl.encrypt() output', JSON.parse(json));
-	}
+	// without delay, changes won't be painted until encrypt locks thread
+	setTimeout(function () {
+		var json = sjcl.encrypt(pwd, $s('#msg').value, {
+			iter: 100000,
+			ks: 256
+		});
 
-	var html = '<!doctype html><body style="margin:3em"><section><input type="password" autofocus placeholder="Password">' +
-		'</section><footer><p>Created with <a href="' + canonical + '">' + canonical + '</a>.</footer>' +
-		'<script>{{{SCRIPT}}}<\/script></body>';
+		var html = $s('#tpl_page').innerHTML
+			.replace('{{{SCRIPT}}}', '<script>' + $s('#tpl_script').innerHTML + '<\/script>')
+			.replace('{{{DATA}}}', JSON.stringify(json))
+			.replace('{{{LIBS}}}', $s('#tpl_libs').innerHTML);
 
-	html = html.replace('{{{SCRIPT}}}', document.querySelector('#tpl_script').innerHTML)
-		.replace('{{{DATA}}}', JSON.stringify(json))
-		.replace('{{{SJCL}}}', document.querySelector('#tpl_sjcl').innerHTML);
+		var href = 'data:text/html;base64,' + sjcl.codec.base64.fromBits(sjcl.codec.utf8String.toBits(html));
 
-	var href = 'data:text/html;base64,' + sjcl.codec.base64.fromBits(sjcl.codec.utf8String.toBits(html));
+		// replace the page!
+		$s('section').innerHTML = $s('#tpl_result').innerHTML;
+		$s('section').style.opacity = '';
 
-	// replace the page!
-	document.querySelector('section').innerHTML = document.querySelector('#tpl_result').innerHTML;
+		var a = $s('#down');
+		a.textContent = basename;
+		a.href = href;
+		a.download = basename;
 
-	var a = document.querySelector('#down');
-	a.textContent = basename;
-	a.href = href;
-	a.download = basename + ".html";
+		$s('#h3_name').textContent = basename;
 
-	document.querySelector('#h3_name').textContent = basename + ".html";
-
-	var iframe = document.querySelector('iframe');
-	iframe.contentWindow.document.open();
-	iframe.contentWindow.document.write(html);
-	iframe.contentWindow.document.close();
+		var iframe_doc = $s('iframe').contentWindow.document;
+		iframe_doc.open();
+		iframe_doc.write(html);
+		iframe_doc.close();
+	}, 50);
 });
 </script>
 </body>
