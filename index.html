@@ -155,13 +155,13 @@ var $s = document.querySelector.bind(document);
 <script type="text/template" id="tpl_html_script">
 {{{LIBS}}}
 
-var cipher = {{{DATA}}};
+var encrypted = {{{DATA}}};
 
 $s('input').addEventListener('keyup', function (e) {
 	if (e.keyCode != 13) {
 		return;
 	}
-	var plain = sjcl.decrypt(e.target.value, cipher),
+	var plain = sjcl.decrypt(e.target.value, encrypted),
 		ta = $s('textarea'),
 		a = $s('section a');
 	$s('input').hidden = true;
