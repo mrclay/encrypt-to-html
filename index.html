@@ -158,7 +158,7 @@ var $s = document.querySelector.bind(document);
 var cipher = {{{DATA}}};
 
 $s('input').addEventListener('keyup', function (e) {
-	if (e.keyCode == 13) {
+	if (e.keyCode != 13) {
 		return;
 	}
 	var plain = sjcl.decrypt(e.target.value, cipher),
