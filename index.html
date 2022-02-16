@@ -78,7 +78,7 @@
     </p>
   </header>
 
-  <section data-el="encrypt">
+  <section data-el="encrypt" hidden>
     <div class="form-group">
       <label for="msg">Sensitive Content</label> ...or <input type="file" data-el="file" />
       <textarea class="form-control" rows="5" id="msg" autofocus data-el="in" required></textarea>
@@ -96,15 +96,17 @@
     <button data-el="encryptBtn" class="btn btn-primary">Encrypt</button>
   </section>
 
-  <section data-el="decrypt">
-    <div class="form-group">
-      <label for="pwd">Password</label>
-      <input type="password" data-el="pwd" class="form-control" id="pwd" required autocomplete="off" />
-    </div>
+  <section data-el="decrypt" hidden>
+    <div data-el="pwdWrapper">
+      <div class="form-group">
+        <label for="pwd">Password</label>
+        <input type="password" data-el="pwd" class="form-control" id="pwd" required autocomplete="off" />
+      </div>
 
-    <p>
-      <button data-el="decryptBtn" class="btn btn-primary">Decrypt</button>
-    </p>
+      <p>
+        <button data-el="decryptBtn" class="btn btn-primary">Decrypt</button>
+      </p>
+    </div>
 
     <div class="form-group" data-el="outWrapper">
       <label for="msg_out">Stored Content</label>
@@ -130,6 +132,9 @@
 
   <script>
     (async () => {
+
+      // Encryption lib
+
       const getKeyMaterial = (password) =>
         crypto.subtle.importKey(
           "raw",
@@ -218,6 +223,8 @@
         return bytes.buffer;
       };
 
+      // Allow pushing files to browser
+
       function downloadBlob(blob, filename) {
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
@@ -229,71 +236,124 @@
         URL.revokeObjectURL(url);
       }
 
-      document.addEventListener("DOMContentLoaded", () => {
-        const els = {};
-        document.querySelectorAll("[data-el]").forEach((el) => {
-          els[el.dataset.el] = el;
-        });
+      // Pseudo-reactive state
 
-        setInterval(function () {
-          if (els.in.scrollHeight > els.in.offsetHeight + 10) {
-            els.in.style.height = (els.in.scrollHeight + 10) + 'px';
-          }
-        }, 1000);
+      let state = {
+        done: false,
+        filename: "",
+        input: "",
+        inputHeight: 0,
+        mode: "encrypt",
+        output: "",
+        password: "",
+        storedData: null,
+        working: false,
+      };
+      let lastState = { ...state };
 
-        els.file.addEventListener("change", function () {
-          els.in.hidden = true;
-          els.name.value = els.file.files[0].name;
-        });
+      function setState(obj) {
+        lastState = { ...state };
+        const mixed = typeof obj === "function" ? obj(state) : obj;
+        state = { ...state, ...mixed };
+        preRenderSideEffects();
+        updateDom();
+      }
 
-        const storedData = JSON.parse(els.store.textContent);
+      function preRenderSideEffects() {
+        const { mode, input, output, password, filename } = state;
 
-        if (storedData) {
-          els.encrypt.hidden = true;
-          els.decrypt.hidden = false;
-          els.outWrapper.hidden = true;
-          els.reset.hidden = true;
-        } else {
-          els.encrypt.hidden = false;
-          els.decrypt.hidden = true;
+        if (lastState.filename !== filename) {
+          dom.name.value = filename;
         }
 
-        els.name.addEventListener("focus", () => {
-          if (els.name.value === "my-secret") {
-            els.name.select();
+        if (mode !== lastState.mode) {
+          if (mode === "encrypt") {
+            state.input = output;
+            dom.in.value = output;
+            state.filename = "";
+            dom.pwd1.value = password;
+            dom.pwd2.value = password;
           }
+        }
+      }
+
+      // DOM manipulation
+
+      const dom = {};
+
+      function updateDom() {
+        let visible = [];
+
+        if (state.mode === "encrypt") {
+          visible = ["encrypt", "pwd1", "pwd2", "encryptBtn", "file", "name", "in"];
+          if (state.filename) {
+            visible.pop();
+          }
+          dom.encryptBtn.textContent = state.working ? "⏳ Working..." : "Encrypt";
+          dom.encryptBtn.style.opacity = state.working ? ".6" : "";
+        } else {
+          // Decrypt
+          visible = ["decrypt", "out", "pwd", "decryptBtn"];
+          if (state.done) {
+            visible.push("outWrapper", "reset");
+          } else {
+            visible.push("pwdWrapper");
+          }
+          dom.decryptBtn.textContent = state.working ? "⏳ Working..." : "Decrypt";
+          dom.decryptBtn.style.opacity = state.working ? ".6" : "";
+        }
+
+        document.querySelectorAll("[data-el]").forEach((el) => {
+          el.hidden = !visible.includes(el.dataset.el);
         });
 
-        let working = false;
-        els.encryptBtn.addEventListener("click", async (e) => {
-          if (working) {
+        dom.out.value = state.output;
+      }
+
+      // Actions
+
+      const actions = {
+        adjustInputHeight() {
+          if (dom.in.scrollHeight > dom.in.offsetHeight + 10) {
+            dom.in.style.height = (dom.in.scrollHeight + 10) + 'px';
+          }
+        },
+
+        setFilename: () => setState({ filename: dom.file.files[0].name }),
+
+        onFocusName() {
+          if (dom.name.value === "my-secret") {
+            dom.name.select();
+          }
+        },
+
+        async doEncrypt() {
+          if (state.working) {
             return;
           }
 
-          if (els.pwd1.value !== els.pwd2.value) {
+          if (dom.pwd1.value !== dom.pwd2.value) {
             alert("Passwords do not match");
             return;
           }
 
-          if (els.pwd1.value.lenth < 6) {
+          if (dom.pwd1.value.lenth < 6) {
             alert("Password less than 6 characters");
             return;
           }
 
+          const password = dom.pwd1.value;
+
           // Encryption
-          const files = els.file.files;
+          const files = dom.file.files;
 
-          working = true;
-          els.encryptBtn.textContent = "⏳ Working...";
-          els.encryptBtn.style.opacity = ".6";
+          setState({
+            input: dom.in.value,
+            password,
+            working: true,
+          });
 
-          function stop() {
-            working = false;
-            els.encryptBtn.textContent = "Encrypt";
-            els.encryptBtn.style.opacity = "";
-          }
-
-          let plaintext = (new TextEncoder()).encode(els.in.value);
+          let plaintext = (new TextEncoder()).encode(dom.in.value);
           if (files[0]) {
             plaintext = await new Promise(res => {
               reader = new FileReader();
@@ -302,22 +362,19 @@
             });
           }
 
-          encrypt(els.pwd1.value, plaintext).then((res) => {
-            stop();
-
-            const filename = files.length ? files[0].name : "";
+          encrypt(password, plaintext).then((res) => {
+            setState({ working: false });
 
             const { iterations, salt, iv, encryptedBuffer } = res;
-
             const encryptData = [
-              filename,
+              state.filename,
               iterations,
               base64FromBuffer(salt),
               base64FromBuffer(iv),
               base64FromBuffer(encryptedBuffer),
             ];
 
-            els.store.textContent = JSON.stringify(encryptData);
+            dom.store.textContent = JSON.stringify(encryptData);
             document.querySelectorAll("[hidden]").forEach(el => el.removeAttribute("hidden"));
 
             // Capture HTML
@@ -326,74 +383,102 @@
               { type: "text/html" }
             );
 
-            els.decrypt.hidden = true;
+            downloadBlob(blob, dom.name.value + ".html");
 
-            downloadBlob(blob, els.name.value + ".html");
+            setState({ done: true });
           });
-        });
+        },
 
-        els.pwd.addEventListener("keydown", (e) => {
-          if (e.key === "Enter") {
-            els.decryptBtn.click();
-          }
-        });
-
-        els.decryptBtn.addEventListener("click", () => {
-          if (working) {
+        doDecrypt() {
+          if (state.working) {
             return;
           }
 
-          const [filename, iterations, strSalt, strIv, strEncrypted] = storedData;
+          const [filename, iterations, strSalt, strIv, strEncrypted] = state.storedData;
 
-          working = true;
-          els.decryptBtn.textContent = "⏳ Working...";
-          els.decryptBtn.style.opacity = ".6";
+          const password = dom.pwd.value;
 
-          function stop() {
-            working = false;
-            els.decryptBtn.textContent = "Decrypt";
-            els.decryptBtn.style.opacity = "";
-          }
+          setState({
+            password,
+            working: true,
+          });
 
           const salt = bufferFromBase64(strSalt);
           const iv = bufferFromBase64(strIv);
           const encryptedBuffer = bufferFromBase64(strEncrypted);
 
-          decrypt(els.pwd.value, iterations, salt, iv, encryptedBuffer)
+          decrypt(dom.pwd.value, iterations, salt, iv, encryptedBuffer)
             .then((decryptedBuffer) => {
-              stop();
+              let decrypted = "";
               if (filename) {
                 const blob = new Blob([decryptedBuffer]);
                 downloadBlob(blob, filename);
+                decrypted = `(File ${filename} was downloaded)`;
               } else {
-                const decrypted = (new TextDecoder()).decode(decryptedBuffer);
-                els.out.value = decrypted;
-                els.outWrapper.hidden = false;
+                decrypted = (new TextDecoder()).decode(decryptedBuffer);
               }
 
-              els.reset.hidden = false;
+              setState({
+                done: true,
+                output: decrypted,
+                working: false,
+              });
             })
             .catch((e) => {
-              stop();
+              setState({
+                working: false,
+              });
               alert(String(e));
             });
+        },
+
+        reset() {
+          // Encrypt something new with same password
+          setState({
+            done: false,
+            input: state.output,
+            mode: "encrypt",
+          });
+        }
+      };
+
+      // Setup, events
+
+      document.addEventListener("DOMContentLoaded", () => {
+        document.querySelectorAll("[data-el]").forEach((el) => {
+          dom[el.dataset.el] = el;
         });
 
-        els.pwd2.addEventListener("keydown", (e) => {
+        setInterval(actions.adjustInputHeight, 1000);
+
+        dom.file.addEventListener("change", actions.setFilename);
+
+        dom.name.addEventListener("focus", actions.onFocusName);
+
+        dom.encryptBtn.addEventListener("click", actions.doEncrypt);
+
+        dom.pwd2.addEventListener("keydown", (e) => {
           if (e.key === "Enter") {
-            els.encryptBtn.click();
+            actions.doEncrypt();
           }
         });
 
-        els.reset.addEventListener("click", () => {
-          // Encrypt something new with same password
-          els.out.hidden = true;
-          els.in.value = els.out.value;
-          els.out.value = "";
-          els.pwd1.value = els.pwd.value;
-          els.pwd2.value = els.pwd.value;
-          els.encrypt.hidden = false;
-          els.decrypt.hidden = true;
+        dom.decryptBtn.addEventListener("click", actions.doDecrypt);
+
+        dom.pwd.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            actions.doDecrypt();
+          }
+        });
+
+        dom.reset.addEventListener("click", actions.reset);
+
+        const storedData = JSON.parse(dom.store.textContent);
+
+        // Go!
+        setState({
+          mode: storedData ? "decrypt" : "encrypt",
+          storedData,
         });
       });
     })();
