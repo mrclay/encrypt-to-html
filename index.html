@@ -244,14 +244,18 @@
 
       // Pseudo-reactive state
 
+      const SUCCESS = "success";
+      const MODE_ENCRYPT = 1;
+      const MODE_DECRYPT = 2;
+
       let state = {
         alertMsg: "",
-        alertType: "success",
+        alertType: SUCCESS,
         done: false,
         filename: "",
         input: "",
         inputHeight: 0,
-        mode: "encrypt",
+        mode: MODE_ENCRYPT,
         output: "",
         password: "",
         storedData: null,
@@ -275,7 +279,7 @@
         }
 
         if (mode !== lastState.mode) {
-          if (mode === "encrypt") {
+          if (mode === MODE_ENCRYPT) {
             state.input = output;
             dom.in.value = output;
             state.filename = "";
@@ -293,12 +297,14 @@
         // These elements always visible...
         const visible = ["alertMsg", "pwd1", "pwd2", "encryptBtn", "file", "name", "out", "pwd", "decryptBtn"];
 
-        if (state.mode === "encrypt") {
+        const WORKING = "⏳ Working...";
+
+        if (state.mode === MODE_ENCRYPT) {
           visible.push("encrypt");
           if (!state.filename) {
             visible.push("in");
           }
-          dom.encryptBtn.textContent = state.working ? "⏳ Working..." : "Encrypt";
+          dom.encryptBtn.textContent = state.working ? WORKING : "Encrypt";
           dom.encryptBtn.style.opacity = state.working ? ".6" : "";
         } else {
           // Decrypt
@@ -308,7 +314,7 @@
           } else {
             visible.push("pwdWrapper");
           }
-          dom.decryptBtn.textContent = state.working ? "⏳ Working..." : "Decrypt";
+          dom.decryptBtn.textContent = state.working ? WORKING : "Decrypt";
           dom.decryptBtn.style.opacity = state.working ? ".6" : "";
         }
 
@@ -407,7 +413,7 @@
 
             setState({
               alertMsg: "Your message/file was encrypted to an HTML file.",
-              alertType: "success",
+              alertType: SUCCESS,
               done: true,
               working: false,
             });
@@ -448,7 +454,7 @@
 
               setState({
                 alertMsg,
-                alertType: "success",
+                alertType: SUCCESS,
                 done: true,
                 output: decrypted,
                 working: false,
@@ -469,7 +475,7 @@
             alertMsg: "",
             done: false,
             input: state.output,
-            mode: "encrypt",
+            mode: MODE_ENCRYPT,
           });
         }
       };
@@ -509,7 +515,7 @@
 
         // Go!
         setState({
-          mode: storedData ? "decrypt" : "encrypt",
+          mode: storedData ? MODE_DECRYPT : MODE_ENCRYPT,
           storedData,
         });
       });

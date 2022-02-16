@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "min": "minify-html --output docs/index.html --keep-closing-tags --minify-css --minify-js index.html"
+    "min": "minify-html --output docs/index.html --keep-closing-tags --do-not-minify-doctype --minify-css --minify-js index.html"
   },
   "devDependencies": {
     "@minify-html/js": "^0.8.0"
