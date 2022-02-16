@@ -1,0 +1,17 @@
+{
+  "scripts": {
+    "min": "minify-html --output docs/index.html --keep-closing-tags --minify-css --minify-js index.html"
+  },
+  "devDependencies": {
+    "@minify-html/js": "^0.8.0"
+  },
+  "name": "encrypt-to-html",
+  "version": "2.0.0",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mrclay/encrypt-to-html.git"
+  },
+  "author": "Steve Clay",
+  "license": "ISC"
+}
