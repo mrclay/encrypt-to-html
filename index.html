@@ -78,6 +78,12 @@
     </p>
   </header>
 
+  <section data-el="alert" hidden>
+    <div class="alert alert-success" role="alert">
+      <p data-el="alertMsg"></p>
+    </div>
+  </section>
+
   <section data-el="encrypt" hidden>
     <div class="form-group">
       <label for="msg">Sensitive Content</label> ...or <input type="file" data-el="file" />
@@ -239,6 +245,8 @@
       // Pseudo-reactive state
 
       let state = {
+        alertMsg: "",
+        alertType: "success",
         done: false,
         filename: "",
         input: "",
@@ -282,18 +290,19 @@
       const dom = {};
 
       function updateDom() {
-        let visible = [];
+        // These elements always visible...
+        const visible = ["alertMsg", "pwd1", "pwd2", "encryptBtn", "file", "name", "out", "pwd", "decryptBtn"];
 
         if (state.mode === "encrypt") {
-          visible = ["encrypt", "pwd1", "pwd2", "encryptBtn", "file", "name", "in"];
-          if (state.filename) {
-            visible.pop();
+          visible.push("encrypt");
+          if (!state.filename) {
+            visible.push("in");
           }
           dom.encryptBtn.textContent = state.working ? "⏳ Working..." : "Encrypt";
           dom.encryptBtn.style.opacity = state.working ? ".6" : "";
         } else {
           // Decrypt
-          visible = ["decrypt", "out", "pwd", "decryptBtn"];
+          visible.push("decrypt");
           if (state.done) {
             visible.push("outWrapper", "reset");
           } else {
@@ -303,6 +312,13 @@
           dom.decryptBtn.style.opacity = state.working ? ".6" : "";
         }
 
+        if (state.alertMsg) {
+          dom.alertMsg.textContent = state.alertMsg;
+          dom.alert.querySelector("div").className = `alert alert-${state.alertType}`;
+          visible.push("alert");
+        }
+
+        // Hide data-el elements not marked as visible
         document.querySelectorAll("[data-el]").forEach((el) => {
           el.hidden = !visible.includes(el.dataset.el);
         });
@@ -333,12 +349,18 @@
           }
 
           if (dom.pwd1.value !== dom.pwd2.value) {
-            alert("Passwords do not match");
+            setState({
+              alertMsg: "Passwords do not match",
+              alertType: "warning",
+            });
             return;
           }
 
-          if (dom.pwd1.value.lenth < 6) {
-            alert("Password less than 6 characters");
+          if (dom.pwd1.value.length < 6) {
+            setState({
+              alertMsg: "Password less than 6 characters",
+              alertType: "warning",
+            });
             return;
           }
 
@@ -363,8 +385,6 @@
           }
 
           encrypt(password, plaintext).then((res) => {
-            setState({ working: false });
-
             const { iterations, salt, iv, encryptedBuffer } = res;
             const encryptData = [
               state.filename,
@@ -385,7 +405,12 @@
 
             downloadBlob(blob, dom.name.value + ".html");
 
-            setState({ done: true });
+            setState({
+              alertMsg: "Your message/file was encrypted to an HTML file.",
+              alertType: "success",
+              done: true,
+              working: false,
+            });
           });
         },
 
@@ -410,15 +435,20 @@
           decrypt(dom.pwd.value, iterations, salt, iv, encryptedBuffer)
             .then((decryptedBuffer) => {
               let decrypted = "";
+              let alertMsg = "";
+
               if (filename) {
                 const blob = new Blob([decryptedBuffer]);
                 downloadBlob(blob, filename);
-                decrypted = `(File ${filename} was downloaded)`;
+                alertMsg = "Decrypted file downloaded.";
               } else {
                 decrypted = (new TextDecoder()).decode(decryptedBuffer);
+                alertMsg = "Message decrypted."
               }
 
               setState({
+                alertMsg,
+                alertType: "success",
                 done: true,
                 output: decrypted,
                 working: false,
@@ -426,15 +456,17 @@
             })
             .catch((e) => {
               setState({
+                alertMsg: String(e),
+                alertType: "danger",
                 working: false,
               });
-              alert(String(e));
             });
         },
 
         reset() {
           // Encrypt something new with same password
           setState({
+            alertMsg: "",
             done: false,
             input: state.output,
             mode: "encrypt",
